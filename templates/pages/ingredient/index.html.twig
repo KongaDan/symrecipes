@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymRecipes - Ingredients{% endblock %}
+
+{% block body %}
+    <div class="container my-2">
+        <h2>Mes ingredients</h2>
+        <a href="{{path('ingredient.new')}}" class="btn btn-primary m-3">Ajouter</a>
+
+        {% for label, messages in app.flashes %}
+    <div class="alert alert-{{ label }}">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endfor %}
+
+        <table class="table table-hover mt-2">
+        {% if ingredients.items is not empty %}
+          <h4>Il y a {{ ingredients.getTotalItemCount }} ingredients au total</h4>
+  <thead>
+    <tr>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ID</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Name</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Price</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Date</font></font></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for ing in ingredients %}
+    <tr class="table-active">
+      <th scope="row"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.id}}</font></font></th>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.name}}</font></font></td>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.price}}</font></font></td>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.createdAt|date('d/m/Y')}}</font></font></td>
+    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+  {% else %}
+    <h4> Il n'y a pas d'ingradients </h4>
+  {% endif %}
+    </div>
+    <div class="navigation container d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(ingredients) }}
+</div>
+{% endblock %}
