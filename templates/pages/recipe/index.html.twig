@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SymRecipes -Recettes{% endblock %}
+
+{% block body %}
+    <div class="container m-2">
+        <h2>Mes recettes</h2>
+
+        
+
+    </div>
+
+
+        <table class="table table-hover mt-2">
+        {% if recettes.items is not empty %}
+          <h4 class="mt-4">Il y a {{ recettes.getTotalItemCount }} recettes au total</h4>
+  <thead>
+    <tr>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ID</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Name</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Price</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Difficulte</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Date</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Edit</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Delete</font></font></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for recette in recettes %}
+    <tr class="table-active">
+      <th scope="row"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{recette.id}}</font></font></th>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{recette.name}}</font></font></td>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{recette.price is not empty ? recette.price : 'Inconnu'}}</font></font></td>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{recette.difficulty is not empty ? recette.difficulty : 'Inconnu'}}</font></font></td>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{recette.createdAt|date('d/m/Y')}}</font></font></td>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><a href="{{path('recette.edit',{'id':recette.id})}}" class="btn btn-info">Edit</a></font></font></td>
+<td>
+<td>
+   <a href="{{ path('recette.delete', {'id': recette.id}) }}" class="btn btn-danger">
+        Delete
+    </a>
+</td>    </tr>
+
+  {% endfor %}
+  </tbody>
+</table>
+  {% else %}
+    <h4> Il n'y a pas de recettes </h4>
+  {% endif %}
+    </div>
+    <div class="navigation container d-flex justify-content-center mt-4">
+    {{ knp_pagination_render(recettes) }}
+</div>
+{% endblock %}

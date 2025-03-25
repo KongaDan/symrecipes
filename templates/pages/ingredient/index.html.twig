@@ -5,15 +5,17 @@
 {% block body %}
     <div class="container my-2">
         <h2>Mes ingredients</h2>
-        <a href="{{path('ingredient.new')}}" class="btn btn-primary m-3">Ajouter</a>
 
-        {% for label, messages in app.flashes %}
-    <div class="alert alert-{{ label }}">
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
+        <a href="{{ path('ingredient.new')}}" class="btn btn-primary m-3">Creer un ingredient</a>
+
+        {% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+
     </div>
-{% endfor %}
+
 
         <table class="table table-hover mt-2">
         {% if ingredients.items is not empty %}
@@ -24,6 +26,8 @@
       <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Name</font></font></th>
       <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Price</font></font></th>
       <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Date</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Edit</font></font></th>
+      <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Delete</font></font></th>
     </tr>
   </thead>
   <tbody>
@@ -33,7 +37,12 @@
       <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.name}}</font></font></td>
       <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.price}}</font></font></td>
       <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{ing.createdAt|date('d/m/Y')}}</font></font></td>
-    </tr>
+      <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><a href="{{path('ingredient.edit',{'id':ing.id})}}" class="btn btn-info">Edit</a></font></font></td>
+<td>
+    <a href="{{ path('ingredient.delete', {'id': ing.id}) }}" class="btn btn-danger">
+        Delete
+    </a>
+</td>    </tr>
 
   {% endfor %}
   </tbody>
