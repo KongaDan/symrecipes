@@ -7,10 +7,12 @@ use App\Form\IngredientsType;
 use App\Repository\IngredientRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class IngredientController extends AbstractController
 {
@@ -25,7 +27,10 @@ final class IngredientController extends AbstractController
     #[Route('/ingredient', name: 'app_ingredient', methods:['GET'])]
     public function index(IngredientRepository $repository, PaginatorInterface $paginator, Request $request): Response
     {
-        $ingredients = $repository->findAll();
+        #$ingredients = $repository->findAll();
+        $ingredients = $repository->findBy(
+            ['user'=>$this->getUser()]
+        );
         $pagination = $paginator->paginate(
             $ingredients, /* query NOT result */
             $request->query->getInt('page', 1), /* page number */
@@ -59,6 +64,7 @@ final class IngredientController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) { 
 
             $ingredient = $form->getData(); 
+            $ingredient->setUser($this->getUser());
             $manager->persist($ingredient);
             $manager->flush();
 
@@ -85,6 +91,7 @@ final class IngredientController extends AbstractController
  *   }
  */
 
+ #[IsGranted('ROLE_ADMIN')]
  #[Route('ingredient/edit/{id}',name:'ingredient.edit', methods:['GET','POST'])]
  public function edit(
      Ingredient $ingredient,

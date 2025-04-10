@@ -10,8 +10,11 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[IsGranted('ROLE_USER')]
 final class RecipeController extends AbstractController
 {
     /**
@@ -29,7 +32,9 @@ final class RecipeController extends AbstractController
         Request $request): Response
 
     {
-        $recipes = $repository->findAll();
+        $recipes = $repository->findBy([
+            'user'=>$this->getUser()
+        ]);
         $pagination = $paginator->paginate(
             $recipes, 
             $request->query->getInt('page', 1), /* page number */
@@ -37,6 +42,22 @@ final class RecipeController extends AbstractController
         );
         return $this->render('pages/recipe/index.html.twig', [
             'recettes' => $pagination,
+        ]);
+    }
+
+    #[Route('/recipe/{id}', name: 'recipe.show', methods:['GET'])]
+    public function show(
+        Recipe $recipe,
+        ): Response
+    {
+        if (!$recipe) {
+            throw $this->createNotFoundException('La recette n\'existe pas');
+        }
+        /* if ($recipe->getUser() !== $this->getUser()) {
+            return $this->redirectToRoute('recipe.index');
+                } */
+        return $this->render('pages/recipe/show.html.twig', [
+            'recipe' => $recipe,
         ]);
     }
 
@@ -54,13 +75,14 @@ final class RecipeController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) { 
 
-            $ingredient = $form->getData(); 
-            $manager->persist($ingredient);
+            $recipe = $form->getData();
+            $recipe->setUser($this->getUser());
+            $manager->persist($recipe);
             $manager->flush();
 
             $this->addFlash(
                 'succes',
-                'Votre ingredient a ete ajoute !'
+                'Votre recttes a ete ajoute !'
             );
             return $this->redirectToRoute('recipe.index');
         }
@@ -69,6 +91,7 @@ final class RecipeController extends AbstractController
         ]);
     }
 
+    #[Security("is_granted('ROLE_USER') and user === recipe.getUser()")]
     #[Route('recette/edit/{id}',name:'recette.edit', methods:['GET','POST'])]
  public function edit(
      Recipe $recipe,

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block body %}
+    <div class="container">
+<h2 class="display-4 m-3">Mon profil</h2>
+{{ include('user/_form.html.twig', {'submit_label': 'Update'}) }}
+
+    <a href="{{ path('app_user_index') }}">back to list</a>
+
+    {{ include('user/_delete_form.html.twig') }}
+</div>
+
+    
+{% endblock %}

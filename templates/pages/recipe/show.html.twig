@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ recipe.name }} - Recipe Details
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+
+        <h1 class="display-3 m-4 text-center ">{{ recipe.name }}</h1>
+        <p><strong>Ingredients:</strong></p>
+        <ul>
+            {% for ingredient in recipe.ingredients %}
+                <li>{{ ingredient.name }}: {{ ingredient.price }}</li>
+            {% endfor %}
+        </ul>
+
+        <p><strong>Instructions:</strong></p>
+        <p >{{ recipe.description }}</p>
+        <p><strong>Preparation Time:</strong> {{ recipe.time }} minutes</p>
+        <p class="badget-success">difficulty: {{ recipe.difficulty }}</p>
+
+        <a href="{{ path('recipe.index') }}" class="btn btn-primary">Back to Recipes</a>
+    </div>
+{% endblock %}

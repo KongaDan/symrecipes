@@ -19,9 +19,15 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RecipeType extends AbstractType
 {
+    private $token;
+    public function __construct(TokenStorageInterface $token)
+    {
+        $this->token = $token;       
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -123,14 +129,19 @@ class RecipeType extends AbstractType
                 'choice_label' => 'name',
                 'query_builder' => function (EntityRepository $er): QueryBuilder {
                 return $er->createQueryBuilder('i')
-                ->orderBy('i.name', 'ASC');
+                        ->where('i.user = :user')
+                        ->orderBy('i.name', 'ASC')
+                        ->setParameter('user', $this->token->getToken()->getUser());
         },
                 'multiple' => true,
                 'expanded'=>true,
                 'attr'=>[
                     'class'=>'form-check-input',
                 ],
-                'label'=>'Les ingredients'
+                'label'=>'Les ingredients',
+                'label_attr' => [
+                    'class' => 'form-label mt-4'
+                ],
             ])
             ->add('submit',SubmitType::class, [
                 'attr'=>[
